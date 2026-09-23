@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#08361F">
+<title>مشاعري في اليوم الوطني ٩٦</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#08361F; --green:#0B5D36; --sand:#F4EAD2; --paper:#FBF6E9;
+  --gold:#C79A3B; --ink:#12281C; --muted:#5B6B60; --danger:#A3311F;
+  --display:"Reem Kufi","Tahoma",system-ui,sans-serif;
+  --text:"IBM Plex Sans Arabic","Tahoma",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; min-height:100vh; font-family:var(--text); color:var(--ink);
+  background:var(--night);
+  background-image:
+    radial-gradient(120% 60% at 50% 0%, #0E5A35 0%, transparent 60%),
+    linear-gradient(135deg, rgba(199,154,59,.10) 25%, transparent 25%),
+    linear-gradient(-135deg, rgba(199,154,59,.10) 25%, transparent 25%);
+  background-size:auto, 44px 44px, 44px 44px;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.wrap{max-width:560px; margin:0 auto; padding:1.2rem 1rem 3rem}
+.hero{display:flex; align-items:center; gap:.9rem; color:var(--sand); padding:.6rem .2rem 1.2rem}
+.hero .n{font-family:var(--display); font-weight:700; font-size:4.6rem; line-height:.9; color:var(--sand)}
+.hero h1{font-family:var(--display); font-weight:700; font-size:1.35rem; line-height:1.35; margin:0}
+.hero p{margin:.25rem 0 0; font-size:.95rem; opacity:.85}
+
+.sheet{background:var(--paper); border-radius:1.2rem; padding:1.3rem 1.1rem 1.4rem; border-top:.4rem solid var(--gold); box-shadow:0 1rem 2.4rem rgba(0,0,0,.35)}
+.demo{background:#FFF3CD; color:#5C4300; border-radius:.7rem; padding:.6rem .8rem; font-size:.9rem; margin-bottom:1rem}
+label.lbl, .lbl{display:block; font-weight:600; margin:1.1rem 0 .45rem}
+form > .lbl:first-child{margin-top:0}
+.hint{font-weight:400; color:var(--muted); font-size:.85rem}
+input[type=text], textarea{
+  width:100%; font:inherit; font-size:1.05rem; color:var(--ink); background:#fff;
+  border:1.5px solid #CFC7AF; border-radius:.75rem; padding:.75rem .85rem;
+}
+textarea{min-height:7.5rem; resize:vertical; line-height:1.7}
+input:focus-visible, textarea:focus-visible, .chip input:focus-visible + span, button:focus-visible, .pick:focus-within{outline:3px solid var(--gold); outline-offset:2px}
+.count{font-size:.85rem; color:var(--muted); text-align:left; margin-top:.25rem}
+
+.chips{display:grid; grid-template-columns:repeat(3,1fr); gap:.5rem}
+.chip{position:relative}
+.chip input{position:absolute; opacity:0; inset:0; cursor:pointer}
+.chip span{display:flex; flex-direction:column; align-items:center; gap:.15rem; padding:.65rem .3rem; border:1.5px solid #CFC7AF; border-radius:.8rem; background:#fff; font-size:.95rem; font-weight:500}
+.chip span b{font-size:1.5rem; line-height:1.2}
+.chip input:checked + span{background:var(--green); color:#fff; border-color:var(--green)}
+
+.photo-row{display:flex; align-items:center; gap:.9rem}
+.thumb{width:4.5rem; height:4.5rem; border-radius:50%; background:#E8E0C8; border:2px dashed #B9AE8A; display:grid; place-items:center; overflow:hidden; flex:none; color:var(--muted); font-size:1.6rem}
+.thumb img{width:100%; height:100%; object-fit:cover}
+.pick{display:inline-block; position:relative; background:#fff; border:1.5px solid var(--green); color:var(--green); border-radius:.75rem; padding:.65rem 1rem; font-weight:600; cursor:pointer}
+.pick input{position:absolute; inset:0; opacity:0; cursor:pointer; width:100%}
+.link{background:none; border:0; color:var(--danger); font:inherit; font-weight:500; padding:.4rem; cursor:pointer}
+
+.consent{display:flex; gap:.6rem; align-items:flex-start; margin-top:1.2rem; font-size:.95rem; line-height:1.6}
+.consent input{width:1.3rem; height:1.3rem; margin-top:.2rem; accent-color:var(--green); flex:none}
+
+.err{color:var(--danger); font-weight:500; margin-top:.9rem; min-height:1.4em}
+.send{width:100%; margin-top:.6rem; font:inherit; font-size:1.15rem; font-weight:600; color:#fff; background:var(--green); border:0; border-radius:.9rem; padding:.95rem; cursor:pointer}
+.send[disabled]{opacity:.6; cursor:wait}
+.hp{position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden}
+
+.done{display:none; text-align:center; padding:1.6rem .4rem 1rem}
+.done .big{font-size:3.2rem}
+.done h2{font-family:var(--display); font-size:1.6rem; margin:.4rem 0}
+.done p{margin:.4rem 0; line-height:1.8}
+.again{margin-top:1rem; font:inherit; font-weight:600; background:#fff; color:var(--green); border:1.5px solid var(--green); border-radius:.8rem; padding:.7rem 1.3rem; cursor:pointer}
+@media (prefers-reduced-motion:no-preference){ .send{transition:transform .15s} .send:active{transform:scale(.98)} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="n" aria-hidden="true">٩٦</div>
+    <div>
+      <h1>اليوم الوطني السعودي السادس والتسعون</h1>
+      <p>شاركنا مشاعرك، وستظهر بطاقتك على شاشة الكلية</p>
+    </div>
+  </div>
+
+  <div class="sheet">
+    <div id="demoNote" class="demo" hidden>وضع تجريبي: لم تُضبط إعدادات Supabase بعد، لذلك لن تُرسل البطاقة إلى أي مكان.</div>
+
+    <form id="f" novalidate>
+      <label class="lbl" for="name">اسمك كما تحب أن يظهر <span class="hint">(الاسم الأول يكفي)</span></label>
+      <input id="name" type="text" maxlength="40" autocomplete="given-name" placeholder="مثال: سارة" required>
+
+      <div class="lbl" id="feelLbl">ما شعورك في هذا اليوم؟</div>
+      <div class="chips" role="radiogroup" aria-labelledby="feelLbl">
+        <label class="chip"><input type="radio" name="feeling" value="pride"><span><b>💚</b>فخر</span></label>
+        <label class="chip"><input type="radio" name="feeling" value="joy"><span><b>🎉</b>فرح</span></label>
+        <label class="chip"><input type="radio" name="feeling" value="love"><span><b>❤️</b>حب الوطن</span></label>
+        <label class="chip"><input type="radio" name="feeling" value="belonging"><span><b>🤝</b>انتماء</span></label>
+        <label class="chip"><input type="radio" name="feeling" value="gratitude"><span><b>🙏</b>امتنان</span></label>
+        <label class="chip"><input type="radio" name="feeling" value="hope"><span><b>✨</b>أمل</span></label>
+      </div>
+
+      <label class="lbl" for="phrase">عبارتك عن اليوم الوطني</label>
+      <textarea id="phrase" maxlength="140" placeholder="اكتب عبارة قصيرة من قلبك" required></textarea>
+      <div class="count"><span id="cnt">0</span> / 140</div>
+
+      <div class="lbl">صورتك <span class="hint">(اختيارية)</span></div>
+      <div class="photo-row">
+        <div class="thumb" id="thumb" aria-hidden="true">📷</div>
+        <div>
+          <label class="pick">اختر صورة أو التقط واحدة<input id="photo" type="file" accept="image/*"></label>
+          <div><button type="button" class="link" id="rm" hidden>إزالة الصورة</button></div>
+        </div>
+      </div>
+
+      <label class="consent">
+        <input type="checkbox" id="ok">
+        <span>أوافق على عرض اسمي وعبارتي وصورتي على شاشة الكلية في اليوم الوطني.</span>
+      </label>
+
+      <div class="hp" aria-hidden="true"><label>لا تملأ هذا الحقل<input type="text" id="website" tabindex="-1" autocomplete="off"></label></div>
+
+      <div class="err" id="err" role="alert"></div>
+      <button class="send" id="send" type="submit">إرسال بطاقتي</button>
+    </form>
+
+    <div class="done" id="done" role="status">
+      <div class="big">💚</div>
+      <h2>وصلت بطاقتك</h2>
+      <p>ستظهر على الشاشة بعد أن يعتمدها المشرف، وقد يستغرق ذلك دقائق.</p>
+      <button class="again" id="again" type="button">إرسال بطاقة أخرى</button>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  var CFG = window.APP_CONFIG || {};
+  var configured = /^https:\/\//.test(CFG.SUPABASE_URL||"") && !/YOUR/.test(CFG.SUPABASE_URL||"")
+                   && !!CFG.SUPABASE_ANON_KEY && !/YOUR/.test(CFG.SUPABASE_ANON_KEY);
+  var sb = null;
+  if (configured && window.supabase) { sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY); }
+  var demo = !sb;
+  var $ = function(s){ return document.querySelector(s); };
+  if (demo) $("#demoNote").hidden = false;
+
+  var photoBlob = null, thumbURL = null;
+  var COOLDOWN_MS = 30000;
+
+  $("#phrase").addEventListener("input", function(e){ $("#cnt").textContent = e.target.value.length; });
+
+  function setThumb(blob){
+    if (thumbURL) URL.revokeObjectURL(thumbURL);
+    var t = $("#thumb");
+    if (!blob){ thumbURL = null; t.textContent = "📷"; $("#rm").hidden = true; return; }
+    thumbURL = URL.createObjectURL(blob);
+    t.textContent = "";
+    var im = new Image(); im.src = thumbURL; im.alt = "";
+    t.appendChild(im);
+    $("#rm").hidden = false;
+  }
+
+  // تصغير الصورة في المتصفح قبل الرفع (حفاظًا على مساحة التخزين المجانية)
+  function compress(file){
+    return new Promise(function(resolve, reject){
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function(){
+        var max = 720, r = Math.min(1, max / Math.max(img.naturalWidth, img.naturalHeight));
+        var w = Math.round(img.naturalWidth * r), h = Math.round(img.naturalHeight * r);
+        var c = document.createElement("canvas"); c.width = w; c.height = h;
+        c.getContext("2d").drawImage(img, 0, 0, w, h);
+        c.toBlob(function(b){ URL.revokeObjectURL(url); b ? resolve(b) : reject(new Error("blob")); }, "image/jpeg", 0.82);
+      };
+      img.onerror = function(){ URL.revokeObjectURL(url); reject(new Error("img")); };
+      img.src = url;
+    });
+  }
+
+  $("#photo").addEventListener("change", async function(e){
+    var f = e.target.files && e.target.files[0];
+    $("#err").textContent = "";
+    if (!f) return;
+    try { photoBlob = await compress(f); setThumb(photoBlob); }
+    catch(_){ photoBlob = null; setThumb(null); $("#err").textContent = "تعذّرت قراءة هذه الصورة. جرّب صورة أخرى بصيغة JPG أو PNG."; }
+  });
+  $("#rm").addEventListener("click", function(){ photoBlob = null; $("#photo").value = ""; setThumb(null); });
+
+  function fail(msg){ $("#err").textContent = msg; }
+
+  $("#f").addEventListener("submit", async function(e){
+    e.preventDefault();
+    fail("");
+    var name = $("#name").value.trim();
+    var phrase = $("#phrase").value.trim();
+    var fEl = document.querySelector('input[name="feeling"]:checked');
+    if ($("#website").value) return;                       // فخ للروبوتات
+    if (!name)   return fail("اكتب اسمك أولًا.");
+    if (!fEl)    return fail("اختر الشعور الأقرب إليك.");
+    if (!phrase) return fail("اكتب عبارتك عن اليوم الوطني.");
+    if (!$("#ok").checked) return fail("يلزم الموافقة على عرض البطاقة على الشاشة.");
+
+    try {
+      var last = +localStorage.getItem("nd96_last") || 0;
+      if (Date.now() - last < COOLDOWN_MS) return fail("أرسلت بطاقة قبل قليل. انتظر نصف دقيقة ثم أعد المحاولة.");
+    } catch(_){}
+
+    var btn = $("#send"); btn.disabled = true; btn.textContent = "جارٍ الإرسال...";
+    try {
+      if (!demo) {
+        var path = null;
+        if (photoBlob) {
+          path = (crypto.randomUUID ? crypto.randomUUID() : (Date.now() + "-" + Math.random().toString(36).slice(2))) + ".jpg";
+          var up = await sb.storage.from("photos").upload(path, photoBlob, { contentType: "image/jpeg", upsert: false });
+          if (up.error) throw up.error;
+        }
+        // ملاحظة: لا نستخدم select() هنا لأن الطالب لا يملك صلاحية قراءة البطاقات غير المعتمدة
+        var ins = await sb.from("messages").insert({ name: name, feeling: fEl.value, phrase: phrase, photo_path: path });
+        if (ins.error) throw ins.error;
+      } else {
+        await new Promise(function(r){ setTimeout(r, 600); });
+      }
+      try { localStorage.setItem("nd96_last", String(Date.now())); } catch(_){}
+      $("#f").style.display = "none"; $("#done").style.display = "block";
+      window.scrollTo(0,0);
+    } catch(err) {
+      console.error(err);
+      fail("تعذّر الإرسال. تأكد من اتصالك بالإنترنت ثم اضغط إرسال مرة أخرى.");
+    } finally {
+      btn.disabled = false; btn.textContent = "إرسال بطاقتي";
+    }
+  });
+
+  $("#again").addEventListener("click", function(){
+    $("#f").reset(); photoBlob = null; setThumb(null); $("#cnt").textContent = "0";
+    $("#done").style.display = "none"; $("#f").style.display = "block";
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>اعتماد البطاقات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--night:#08361F; --green:#0B5D36; --sand:#F4EAD2; --paper:#FBF6E9; --gold:#C79A3B; --ink:#12281C; --muted:#5B6B60; --danger:#A3311F;
+  --display:"Reem Kufi","Tahoma",system-ui,sans-serif; --text:"IBM Plex Sans Arabic","Tahoma",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0; font-family:var(--text); background:#EFE8D3; color:var(--ink); min-height:100vh}
+header{background:var(--night); color:var(--sand); padding:1rem 1rem .9rem; display:flex; align-items:center; gap:.8rem; flex-wrap:wrap; border-bottom:.3rem solid var(--gold)}
+header h1{font-family:var(--display); font-size:1.3rem; margin:0; flex:1}
+header button{font:inherit; color:var(--sand); background:transparent; border:1px solid rgba(244,234,210,.5); border-radius:.6rem; padding:.4rem .8rem; cursor:pointer}
+main{max-width:1000px; margin:0 auto; padding:1rem}
+.login{max-width:380px; margin:2.5rem auto; background:var(--paper); border-radius:1rem; padding:1.4rem; border-top:.35rem solid var(--gold); box-shadow:0 .6rem 1.6rem rgba(0,0,0,.15)}
+.login h2{font-family:var(--display); margin:0 0 1rem}
+label{display:block; font-weight:600; margin:.8rem 0 .3rem}
+input{width:100%; font:inherit; font-size:1rem; padding:.7rem .8rem; border:1.5px solid #CFC7AF; border-radius:.7rem; background:#fff}
+input:focus-visible,button:focus-visible{outline:3px solid var(--gold); outline-offset:2px}
+.btn{font:inherit; font-weight:600; border:0; border-radius:.7rem; padding:.7rem 1.1rem; cursor:pointer}
+.primary{background:var(--green); color:#fff}
+.ghost{background:#fff; color:var(--green); border:1.5px solid var(--green)}
+.danger{background:#fff; color:var(--danger); border:1.5px solid var(--danger)}
+.login .btn{width:100%; margin-top:1.1rem; font-size:1.05rem}
+.err{color:var(--danger); font-weight:500; margin-top:.8rem; min-height:1.3em}
+.note{background:#FFF3CD; color:#5C4300; border-radius:.8rem; padding:.8rem 1rem; line-height:1.7}
+
+.tabs{display:flex; gap:.5rem; margin:.2rem 0 1rem; flex-wrap:wrap}
+.tab{font:inherit; font-weight:600; padding:.55rem 1rem; border-radius:999px; border:1.5px solid var(--green); background:#fff; color:var(--green); cursor:pointer}
+.tab[aria-selected=true]{background:var(--green); color:#fff}
+.list{display:grid; gap:.8rem; grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.item{background:var(--paper); border-radius:1rem; padding:.9rem; display:flex; flex-direction:column; gap:.6rem; border-top:.3rem solid var(--gold); box-shadow:0 .3rem 1rem rgba(0,0,0,.1)}
+.row{display:flex; gap:.7rem; align-items:center}
+.ph{width:3.6rem; height:3.6rem; border-radius:50%; overflow:hidden; background:var(--green); color:#fff; display:grid; place-items:center; font-family:var(--display); font-size:1.4rem; flex:none}
+.ph img{width:100%; height:100%; object-fit:cover}
+.meta b{display:block}
+.meta small{color:var(--muted)}
+.item p{margin:0; line-height:1.7; overflow-wrap:anywhere}
+.acts{display:flex; gap:.5rem; margin-top:auto}
+.acts .btn{flex:1; padding:.6rem}
+.empty{text-align:center; color:var(--muted); padding:2.5rem 1rem}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<header>
+  <h1>اعتماد البطاقات</h1>
+  <span id="who" hidden></span>
+  <button id="out" hidden>تسجيل الخروج</button>
+</header>
+<main>
+  <div id="setup" class="note" hidden>لم تُضبط إعدادات Supabase بعد. عبّئ SUPABASE_URL و SUPABASE_ANON_KEY في ملف config.js ثم أعد فتح الصفحة.</div>
+
+  <form id="login" class="login" hidden>
+    <h2>دخول المشرف</h2>
+    <label for="em">البريد الإلكتروني</label>
+    <input id="em" type="email" autocomplete="username" required>
+    <label for="pw">كلمة المرور</label>
+    <input id="pw" type="password" autocomplete="current-password" required>
+    <div class="err" id="lerr" role="alert"></div>
+    <button class="btn primary" type="submit">دخول</button>
+  </form>
+
+  <section id="app" hidden>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tPending" aria-selected="true">بانتظار الاعتماد <span id="nP">٠</span></button>
+      <button class="tab" role="tab" id="tApproved" aria-selected="false">المعتمدة <span id="nA">٠</span></button>
+    </div>
+    <div id="msg" class="err"></div>
+    <div id="list" class="list"></div>
+    <div id="none" class="empty" hidden></div>
+  </section>
+</main>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+(function(){
+  "use strict";
+  var CFG = window.APP_CONFIG || {};
+  var configured = /^https:\/\//.test(CFG.SUPABASE_URL||"") && !/YOUR/.test(CFG.SUPABASE_URL||"")
+                   && !!CFG.SUPABASE_ANON_KEY && !/YOUR/.test(CFG.SUPABASE_ANON_KEY);
+  var $ = function(s){ return document.querySelector(s); };
+  var FEEL = { pride:["💚","فخر"], joy:["🎉","فرح"], love:["❤️","حب الوطن"], belonging:["🤝","انتماء"], gratitude:["🙏","امتنان"], hope:["✨","أمل"] };
+
+  if (!configured || !window.supabase) { $("#setup").hidden = false; return; }
+  var sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
+  var rows = [], tab = "pending", channel = null, timer = null;
+
+  function n(x){ return Number(x).toLocaleString("ar-SA"); }
+  function url(p){ return sb.storage.from("photos").getPublicUrl(p).data.publicUrl; }
+  function when(t){ try { return new Date(t).toLocaleTimeString("ar-SA", { hour:"2-digit", minute:"2-digit" }); } catch(_){ return ""; } }
+
+  async function boot(){
+    var s = await sb.auth.getSession();
+    if (s.data.session) showApp(s.data.session.user); else showLogin();
+  }
+  function showLogin(){
+    $("#login").hidden = false; $("#app").hidden = true; $("#out").hidden = true; $("#who").hidden = true;
+    if (channel) { sb.removeChannel(channel); channel = null; }
+    clearInterval(timer);
+  }
+  function showApp(user){
+    $("#login").hidden = true; $("#app").hidden = false; $("#out").hidden = false;
+    $("#who").hidden = false; $("#who").textContent = user.email || "";
+    load();
+    channel = sb.channel("admin").on("postgres_changes", { event: "*", schema: "public", table: "messages" }, load).subscribe();
+    timer = setInterval(load, 20000);
+  }
+
+  $("#login").addEventListener("submit", async function(e){
+    e.preventDefault(); $("#lerr").textContent = "";
+    var r = await sb.auth.signInWithPassword({ email: $("#em").value.trim(), password: $("#pw").value });
+    if (r.error) { $("#lerr").textContent = "تعذّر الدخول. تحقق من البريد وكلمة المرور."; return; }
+    showApp(r.data.user);
+  });
+  $("#out").addEventListener("click", async function(){ await sb.auth.signOut(); showLogin(); });
+  $("#tPending").addEventListener("click", function(){ setTab("pending"); });
+  $("#tApproved").addEventListener("click", function(){ setTab("approved"); });
+  function setTab(t){
+    tab = t;
+    $("#tPending").setAttribute("aria-selected", t === "pending");
+    $("#tApproved").setAttribute("aria-selected", t === "approved");
+    render();
+  }
+
+  async function load(){
+    var r = await sb.from("messages").select("*").order("created_at", { ascending: false }).limit(500);
+    if (r.error) { $("#msg").textContent = "تعذّر تحميل البطاقات. تحقق من الاتصال وأعد المحاولة."; return; }
+    $("#msg").textContent = ""; rows = r.data || []; render();
+  }
+
+  function render(){
+    var pend = rows.filter(function(x){ return !x.approved; }), appr = rows.filter(function(x){ return x.approved; });
+    $("#nP").textContent = n(pend.length); $("#nA").textContent = n(appr.length);
+    document.title = (pend.length ? "(" + n(pend.length) + ") " : "") + "اعتماد البطاقات";
+    var list = tab === "pending" ? pend : appr, box = $("#list");
+    box.replaceChildren();
+    $("#none").hidden = list.length > 0;
+    $("#none").textContent = tab === "pending" ? "لا توجد بطاقات بانتظار الاعتماد الآن." : "لا توجد بطاقات معتمدة بعد.";
+    list.forEach(function(c){ box.appendChild(item(c)); });
+  }
+
+  function item(c){
+    var f = FEEL[c.feeling] || FEEL.pride;
+    var el = document.createElement("div"); el.className = "item";
+    var row = document.createElement("div"); row.className = "row";
+    var ph = document.createElement("div"); ph.className = "ph";
+    if (c.photo_path) { var im = new Image(); im.alt = ""; im.src = url(c.photo_path); im.onerror = function(){ im.remove(); ph.textContent = (c.name||"★").charAt(0); }; ph.appendChild(im); }
+    else ph.textContent = (c.name || "★").charAt(0);
+    var meta = document.createElement("div"); meta.className = "meta";
+    var b = document.createElement("b"); b.textContent = c.name;
+    var sm = document.createElement("small"); sm.textContent = f[0] + " " + f[1] + " ، " + when(c.created_at);
+    meta.append(b, sm); row.append(ph, meta);
+    var p = document.createElement("p"); p.textContent = c.phrase;
+    var acts = document.createElement("div"); acts.className = "acts";
+    if (!c.approved) {
+      acts.append(btn("اعتماد", "btn primary", function(){ setApproved(c.id, true); }),
+                  btn("رفض وحذف", "btn danger", function(){ remove(c); }));
+    } else {
+      acts.append(btn("إخفاء من الشاشة", "btn ghost", function(){ setApproved(c.id, false); }),
+                  btn("حذف", "btn danger", function(){ remove(c); }));
+    }
+    el.append(row, p, acts);
+    return el;
+  }
+  function btn(t, cls, fn){ var b = document.createElement("button"); b.type = "button"; b.className = cls; b.textContent = t; b.addEventListener("click", fn); return b; }
+
+  async function setApproved(id, v){
+    var r = await sb.from("messages").update({ approved: v }).eq("id", id);
+    if (r.error) { $("#msg").textContent = "لم يتم التحديث. تأكد أن حسابك مضاف كمشرف في ملف setup.sql."; return; }
+    load();
+  }
+  async function remove(c){
+    if (!confirm("حذف هذه البطاقة نهائيًا؟")) return;
+    if (c.photo_path) { try { await sb.storage.from("photos").remove([c.photo_path]); } catch(_){} }
+    var r = await sb.from("messages").delete().eq("id", c.id);
+    if (r.error) { $("#msg").textContent = "لم يتم الحذف. تأكد أن حسابك مضاف كمشرف في ملف setup.sql."; return; }
+    load();
+  }
+
+  boot();
+})();
+</script>
+</body>
+</html>

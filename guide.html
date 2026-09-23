@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>دليل تشغيل شاشة اليوم الوطني ٩٦</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Reem+Kufi:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--night:#08361F;--green:#0B5D36;--paper:#FBF6E9;--gold:#C79A3B;--ink:#12281C;--muted:#5B6B60}
+*{box-sizing:border-box}
+body{margin:0;font-family:"IBM Plex Sans Arabic",Tahoma,system-ui,sans-serif;background:#EFE8D3;color:var(--ink);line-height:1.9}
+header{background:var(--night);color:#F4EAD2;padding:1.4rem 1rem;border-bottom:.3rem solid var(--gold)}
+header h1{font-family:"Reem Kufi",Tahoma,sans-serif;margin:0 auto;max-width:760px;font-size:1.5rem}
+main{max-width:760px;margin:0 auto;padding:1rem 1rem 3rem}
+section{background:var(--paper);border-radius:1rem;padding:1rem 1.2rem;margin:1rem 0;box-shadow:0 .3rem 1rem rgba(0,0,0,.08)}
+h2{font-size:1.15rem;margin:.2rem 0 .5rem;color:var(--green)}
+ol,ul{padding-inline-start:1.3rem;margin:.4rem 0}
+li{margin:.35rem 0}
+code,pre{direction:ltr;unicode-bidi:embed;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.85rem;background:#fff;border:1px solid #DDD5BC;border-radius:.4rem}
+code{padding:.05rem .35rem}
+pre{padding:.7rem;overflow-x:auto;text-align:left}
+.warn{background:#FFF3CD;color:#5C4300;border-radius:.7rem;padding:.7rem .9rem}
+.files td,.files th{padding:.4rem .6rem;border-bottom:1px solid #E3DBC2;text-align:right;vertical-align:top}
+.files{border-collapse:collapse;width:100%;font-size:.95rem}
+.files td:first-child{direction:ltr;text-align:left;white-space:nowrap}
+</style>
+</head>
+<body>
+<header><h1>دليل تشغيل شاشة اليوم الوطني ٩٦ التفاعلية</h1></header>
+<main>
+
+<section>
+<h2>ما الذي في هذا المجلد؟</h2>
+<table class="files">
+<tr><td>index.html</td><td>صفحة الطالب: الاسم والشعور والعبارة والصورة (اختيارية).</td></tr>
+<tr><td>screen.html</td><td>شاشة العرض: البطاقات تظهر لحظيًا مع رمز QR للمشاركة.</td></tr>
+<tr><td>admin.html</td><td>صفحة المشرف: اعتماد البطاقات أو رفضها قبل ظهورها.</td></tr>
+<tr><td>config.js</td><td>الإعدادات: مفاتيح Supabase واسم الكلية ومدد العرض.</td></tr>
+<tr><td>setup.sql</td><td>يجهّز قاعدة البيانات والصلاحيات ومجلد الصور.</td></tr>
+</table>
+<p>لمعاينة التصميم قبل أي إعداد: افتح <code>screen.html</code> كما هي، وستعمل بوضع تجريبي ببطاقات وهمية.</p>
+</section>
+
+<section>
+<h2>الخطوة ١: إنشاء مشروع Supabase مجاني</h2>
+<ol>
+<li>ادخل إلى <code>supabase.com</code> وأنشئ حسابًا، ثم اضغط <b>New project</b>.</li>
+<li>اختر اسمًا للمشروع ومنطقة قريبة، واحفظ كلمة مرور قاعدة البيانات في مكان آمن.</li>
+<li>انتظر دقيقة أو دقيقتين حتى يجهز المشروع.</li>
+</ol>
+</section>
+
+<section>
+<h2>الخطوة ٢: تشغيل ملف الإعداد</h2>
+<ol>
+<li>افتح <code>setup.sql</code> بأي محرر نصوص.</li>
+<li>غيّر <code>ADMIN_EMAIL@example.com</code> إلى البريد الذي سيدخل به المشرف.</li>
+<li>في Supabase افتح <b>SQL Editor</b> ← <b>New query</b>، والصق المحتوى كاملًا، واضغط <b>Run</b>.</li>
+</ol>
+</section>
+
+<section>
+<h2>الخطوة ٣: حساب المشرف</h2>
+<ol>
+<li>من <b>Authentication</b> ← <b>Users</b> اختر <b>Add user</b>، وأدخل البريد نفسه وكلمة مرور قوية، وفعّل تأكيد البريد تلقائيًا إن ظهر الخيار.</li>
+<li>أوقف التسجيل الذاتي حتى لا ينشئ أحد حسابًا: في إعدادات المصادقة ابحث عن <b>Allow new users to sign up</b> وأطفئه.</li>
+</ol>
+<p class="warn">قد تختلف أسماء القوائم في Supabase قليلًا عما ذُكر هنا، فالواجهة تتغير. المهم أن تنشئ مستخدمًا واحدًا وتمنع التسجيل الجديد.</p>
+</section>
+
+<section>
+<h2>الخطوة ٤: ربط الصفحات بالمشروع</h2>
+<ol>
+<li>من <b>Project Settings</b> ← <b>API</b> انسخ <b>Project URL</b> والمفتاح العام (اسمه anon أو publishable).</li>
+<li>الصقهما في <code>config.js</code> مكان <code>YOUR-PROJECT</code> و <code>YOUR-ANON-PUBLIC-KEY</code>.</li>
+<li>عدّل <code>COLLEGE_NAME</code> إن أردت.</li>
+</ol>
+<p class="warn">لا تضع مفتاح <b>service_role</b> في أي ملف أبدًا. المفتاح العام وحده هو المخصص للصفحات، وحماية البيانات تعتمد على قواعد setup.sql.</p>
+</section>
+
+<section>
+<h2>الخطوة ٥: رفع الموقع على استضافة مجانية</h2>
+<p>الخيار الأبسط GitHub Pages:</p>
+<ol>
+<li>أنشئ مستودعًا جديدًا على <code>github.com</code>.</li>
+<li>اختر <b>Add file</b> ← <b>Upload files</b> وارفع الملفات الخمسة (ما عدا setup.sql إن أردت).</li>
+<li>من <b>Settings</b> ← <b>Pages</b> اختر النشر من الفرع <code>main</code> والمجلد الجذر.</li>
+<li>بعد دقائق يظهر رابط بالشكل <code>https://USERNAME.github.io/REPO/</code>.</li>
+</ol>
+<p>بدائل مشابهة: Cloudflare Pages أو Netlify. لم أتحقق من شروط الاستضافة المجانية الحالية لأي منها، فراجع صفحاتها الرسمية قبل الاعتماد عليها.</p>
+</section>
+
+<section>
+<h2>الروابط النهائية</h2>
+<ul>
+<li>الطلاب: <code>…/index.html</code> (يظهر رابطها ورمزها تلقائيًا على الشاشة).</li>
+<li>الشاشة: <code>…/screen.html</code> على جهاز متصل بالشاشة الكبيرة، واضغط <b>F</b> لملء الشاشة.</li>
+<li>المشرف: <code>…/admin.html</code> من جوال المشرف أو حاسوبه.</li>
+</ul>
+</section>
+
+<section>
+<h2>قائمة فحص قبل الفعالية</h2>
+<ol>
+<li>أرسل بطاقة تجريبية من جوالك بصورة وبدون صورة.</li>
+<li>ادخل صفحة المشرف واعتمد البطاقة، وتأكد أنها ظهرت على الشاشة خلال ثوانٍ.</li>
+<li>احذف البطاقات التجريبية من صفحة المشرف.</li>
+<li>افتح شاشة العرض قبل الفعالية بيوم وبساعة، وأوقف نوم الجهاز وحافظة الشاشة.</li>
+<li>ادخل لوحة Supabase قبل الفعالية بيوم على الأقل، فالمشاريع المجانية تتوقف تلقائيًا بعد أسبوع من عدم النشاط.</li>
+<li>جرّب الشاشة على الشاشة الفعلية وعلى شبكة الكلية، فقد تحجب بعض الشبكات مواقع الخطوط أو الخدمات.</li>
+</ol>
+</section>
+
+<section>
+<h2>ملاحظات مهمة</h2>
+<ul>
+<li>الصور تُصغَّر في متصفح الطالب قبل الرفع لتوفير مساحة التخزين المجانية.</li>
+<li>روابط الصور عشوائية، لكنها عامة لمن يعرف الرابط، حتى قبل الاعتماد.</li>
+<li>الفاصل الزمني بين البطاقات (٣٠ ثانية) محفوظ في جوال الطالب، وهو تخفيف بسيط للإزعاج وليس حماية قوية من التلاعب. الاعتماد اليدوي هو خط الدفاع الأساسي.</li>
+<li>بعد الفعالية احذف البطاقات والصور من Supabase أو أوقف المشروع، حفاظًا على خصوصية الطلاب.</li>
+<li>تأكد من موافقة الكلية على تصوير الطلاب ونشر صورهم على الشاشة، ونموذج الطالب يطلب موافقته صراحةً.</li>
+<li>لم تُجرَّب هذه الملفات على مشروع Supabase حقيقي أثناء إعدادها، فالاختبار الكامل بالخطوات أعلاه ضروري قبل الفعالية.</li>
+</ul>
+</section>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#08361F">
+<title>مشاعر طلابنا في اليوم الوطني ٩٦</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&family=Reem+Kufi:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#08361F; --green:#0B5D36; --sand:#F4EAD2; --paper:#FBF6E9;
+  --gold:#C79A3B; --ink:#12281C;
+  --display:"Reem Kufi","Tahoma",system-ui,sans-serif;
+  --text:"IBM Plex Sans Arabic","Tahoma",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html{font-size:clamp(14px,.9vw,22px)}
+html,body{margin:0; height:100%; overflow:hidden; background:var(--night); font-family:var(--text); color:var(--sand)}
+body{
+  background-image:
+    radial-gradient(90% 70% at 50% 0%, #10643A 0%, transparent 65%),
+    linear-gradient(135deg, rgba(199,154,59,.07) 25%, transparent 25%),
+    linear-gradient(-135deg, rgba(199,154,59,.07) 25%, transparent 25%);
+  background-size:auto, 3.2rem 3.2rem, 3.2rem 3.2rem;
+}
+.stage{height:100vh; height:100dvh; display:grid; grid-template-rows:auto minmax(0,1fr); position:relative}
+
+/* الشريط المثلثي في أعلى الشاشة */
+.stage::before{
+  content:""; position:absolute; inset:0 0 auto 0; height:.7rem; z-index:2;
+  background:
+    linear-gradient(45deg, var(--gold) 25%, transparent 25%) -.35rem 0,
+    linear-gradient(-45deg, var(--gold) 25%, transparent 25%) -.35rem 0;
+  background-size:.7rem .7rem; opacity:.9;
+}
+
+/* الترويسة */
+.top{display:flex; align-items:center; gap:1.4rem; padding:1.5rem 2rem .6rem}
+.mark{font-family:var(--display); font-weight:700; font-size:7.2rem; line-height:.85; color:var(--sand); letter-spacing:-.02em; flex:none}
+.ttl{flex:1; min-width:0}
+.ttl h1{font-family:var(--display); font-weight:700; font-size:2.3rem; line-height:1.25; margin:0}
+.ttl p{margin:.4rem 0 0; font-size:1.15rem; opacity:.88}
+.ttl .num{color:var(--gold); font-weight:600}
+.join{display:flex; align-items:center; gap:.9rem; flex:none}
+.join .txt{text-align:right; max-width:13rem}
+.join b{display:block; font-size:1.15rem}
+.join small{display:block; direction:ltr; font-size:.72rem; opacity:.75; word-break:break-all; margin-top:.2rem}
+#qr{background:#fff; padding:.5rem; border-radius:.7rem; width:6.6rem; height:6.6rem; display:grid; place-items:center}
+#qr img{width:100%!important; height:100%!important; display:block}
+#qr canvas{display:none!important}
+
+/* جدار البطاقات */
+#wall{display:grid; gap:1rem; padding:.8rem 2rem 1.6rem; min-height:0}
+.slot{min-width:0; min-height:0; position:relative}
+
+.card{
+  --accent:var(--green);
+  font-size:1rem; height:100%; background:var(--paper); color:var(--ink);
+  border-radius:1.1em; border-top:.35em solid var(--accent);
+  padding:.9em 1.1em .95em; display:flex; flex-direction:column; gap:.6em; overflow:hidden;
+  box-shadow:0 .5em 1.6em rgba(0,0,0,.3); opacity:0;
+}
+.card.in{opacity:1; transition:opacity .6s ease}
+.card.out{opacity:0; transition:opacity .45s ease}
+.card[data-feel=pride]{--accent:#0B5D36}
+.card[data-feel=joy]{--accent:#B8741A}
+.card[data-feel=love]{--accent:#A3311F}
+.card[data-feel=belonging]{--accent:#1F5F8B}
+.card[data-feel=gratitude]{--accent:#6B4A8B}
+.card[data-feel=hope]{--accent:#9A7A12}
+
+.head{display:flex; align-items:center; gap:.8em}
+.photo{width:3.4em; height:3.4em; border-radius:50%; flex:none; overflow:hidden; background:var(--accent); color:#fff;
+  display:grid; place-items:center; font-family:var(--display); font-weight:700; font-size:1.45em; box-shadow:0 0 0 .13em var(--paper), 0 0 0 .22em var(--gold)}
+.photo img{width:100%; height:100%; object-fit:cover; display:block}
+.who{min-width:0; display:flex; flex-direction:column; gap:.15em}
+.who b{font-size:1.1em; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.stamp{font-size:.88em; color:var(--accent); font-weight:600}
+.phrase{margin:0; line-height:1.6; font-weight:500; overflow:hidden; display:-webkit-box; -webkit-box-orient:vertical; -webkit-line-clamp:5; overflow-wrap:anywhere}
+.card.s .phrase{font-size:1.5em}
+.card.m .phrase{font-size:1.2em}
+.card.l .phrase{font-size:1.05em}
+
+/* إبراز البطاقة الجديدة */
+#spot{position:fixed; inset:0; z-index:20; display:grid; place-items:center; background:rgba(4,28,16,.82); opacity:0; pointer-events:none; transition:opacity .5s ease}
+#spot.on{opacity:1}
+#spot .card{width:min(38rem,90vw); height:auto; min-height:15rem; font-size:1.55rem; opacity:1; transform:scale(.92) translateY(1.5rem); box-shadow:0 0 0 .25rem var(--gold), 0 2rem 5rem rgba(0,0,0,.5)}
+#spot.on .card{transform:none; transition:transform .8s cubic-bezier(.2,.9,.25,1)}
+#spot .phrase{-webkit-line-clamp:unset; font-size:1.25em!important}
+
+/* حالة الفراغ */
+#empty{position:absolute; inset:0; display:none; place-items:center; text-align:center; z-index:1; padding:8rem 2rem 2rem; pointer-events:none}
+#empty.on{display:grid}
+#empty h2{font-family:var(--display); font-size:2.6rem; margin:0 0 .6rem}
+#empty p{font-size:1.4rem; margin:.3rem 0; opacity:.9}
+#empty .u{direction:ltr; font-size:1.2rem; color:var(--gold)}
+
+/* أدوات صغيرة */
+.tag{position:fixed; left:1rem; bottom:.8rem; z-index:5; font-size:.78rem; opacity:.85; display:flex; gap:.6rem; align-items:center}
+.dot{width:.6rem; height:.6rem; border-radius:50%; background:#4CC38A; display:inline-block}
+.dot.bad{background:#E5A73A}
+.demo-tag{background:#FFF3CD; color:#5C4300; padding:.25rem .7rem; border-radius:.6rem; font-weight:600}
+#fs{position:fixed; top:1rem; left:1rem; z-index:6; font:inherit; font-size:.9rem; color:var(--sand); background:rgba(0,0,0,.35); border:1px solid rgba(244,234,210,.4); border-radius:.6rem; padding:.4rem .8rem; cursor:pointer; opacity:0; transition:opacity .3s}
+body.mv #fs{opacity:1}
+body:not(.mv){cursor:none}
+
+@media (max-width:760px){
+  .top{padding:1.3rem 1rem .4rem; gap:.8rem}
+  .mark{font-size:4.4rem}
+  .ttl h1{font-size:1.25rem}
+  .ttl p{font-size:.9rem}
+  .join{display:none}
+  #wall{padding:.6rem 1rem 1rem}
+}
+@media (prefers-reduced-motion:reduce){
+  .card.in,.card.out,#spot,#spot.on .card{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="stage">
+  <header class="top">
+    <div class="mark" aria-hidden="true">٩٦</div>
+    <div class="ttl">
+      <h1>اليوم الوطني السعودي السادس والتسعون</h1>
+      <p>مشاعر طلابنا في <span id="college"></span>، وعدد البطاقات <span class="num" id="count">٠</span></p>
+    </div>
+    <div class="join">
+      <div class="txt"><b>شاركنا مشاعرك</b><span>امسح الرمز أو افتح الرابط</span><small id="joinurl"></small></div>
+      <div id="qr"></div>
+    </div>
+  </header>
+  <main id="wall" aria-live="polite"></main>
+  <div id="empty">
+    <div>
+      <h2>كن أول من يشارك</h2>
+      <p>امسح الرمز أو افتح الرابط واكتب مشاعرك في اليوم الوطني</p>
+      <p class="u" id="emptyurl"></p>
+    </div>
+  </div>
+</div>
+<div id="spot" aria-hidden="true"></div>
+<div class="tag"><span class="dot" id="dot"></span><span id="stat">متصل</span><span class="demo-tag" id="demoTag" hidden>عرض تجريبي</span></div>
+<button id="fs" type="button">ملء الشاشة</button>
+
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var CFG = window.APP_CONFIG || {};
+  var configured = /^https:\/\//.test(CFG.SUPABASE_URL||"") && !/YOUR/.test(CFG.SUPABASE_URL||"")
+                   && !!CFG.SUPABASE_ANON_KEY && !/YOUR/.test(CFG.SUPABASE_ANON_KEY);
+  var forceDemo = /[?&]demo(=|&|$)/.test(location.search);
+  var sb = null;
+  if (configured && !forceDemo && window.supabase) sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
+  var demo = !sb;
+
+  var ROTATE = (CFG.ROTATE_SECONDS || 6) * 1000;
+  var SPOT   = (CFG.SPOTLIGHT_SECONDS || 9) * 1000;
+  var FEEL = { pride:["💚","فخر"], joy:["🎉","فرح"], love:["❤️","حب الوطن"], belonging:["🤝","انتماء"], gratitude:["🙏","امتنان"], hope:["✨","أمل"] };
+
+  var $ = function(s){ return document.querySelector(s); };
+  var wall = $("#wall"), spot = $("#spot");
+  var cards = new Map(), order = [], slots = [], shown = [];
+  var holding = new Set(), spotQ = [], spotBusy = false;
+  var rr = 0, ptr = 0, ready = false;
+
+  $("#college").textContent = CFG.COLLEGE_NAME || "الكلية";
+  if (demo) $("#demoTag").hidden = false;
+
+  /* ---------- رابط المشاركة و QR ---------- */
+  var joinURL = CFG.STUDENT_URL || new URL("index.html", location.href).href;
+  $("#joinurl").textContent = joinURL.replace(/^https?:\/\//, "");
+  $("#emptyurl").textContent = joinURL.replace(/^https?:\/\//, "");
+  try { if (window.QRCode) new QRCode($("#qr"), { text: joinURL, width: 256, height: 256, correctLevel: QRCode.CorrectLevel.M }); else $("#qr").style.display = "none"; }
+  catch(_){ $("#qr").style.display = "none"; }
+
+  /* ---------- بناء البطاقة (كل النصوص عبر textContent لسلامة العرض) ---------- */
+  function initial(n){ return (String(n||"").trim().charAt(0)) || "★"; }
+  function photoURL(c){
+    if (c.photo_url) return c.photo_url;
+    if (c.photo_path && sb) return sb.storage.from("photos").getPublicUrl(c.photo_path).data.publicUrl;
+    return "";
+  }
+  function build(c){
+    var f = FEEL[c.feeling] || FEEL.pride;
+    var a = document.createElement("article");
+    a.className = "card " + (c.phrase.length > 90 ? "l" : c.phrase.length > 45 ? "m" : "s");
+    a.dataset.id = c.id; a.dataset.feel = c.feeling;
+
+    var head = document.createElement("div"); head.className = "head";
+    var ph = document.createElement("div"); ph.className = "photo";
+    var url = photoURL(c);
+    if (url) {
+      var im = new Image(); im.alt = ""; im.src = url;
+      im.onerror = function(){ im.remove(); ph.textContent = initial(c.name); };
+      ph.appendChild(im);
+    } else ph.textContent = initial(c.name);
+
+    var who = document.createElement("div"); who.className = "who";
+    var nm = document.createElement("b"); nm.textContent = c.name;
+    var st = document.createElement("span"); st.className = "stamp"; st.textContent = f[0] + " " + f[1];
+    who.append(nm, st); head.append(ph, who);
+
+    var p = document.createElement("p"); p.className = "phrase"; p.textContent = c.phrase;
+    a.append(head, p);
+    return a;
+  }
+
+  /* ---------- الشبكة والخانات ---------- */
+  function layout(){
+    var rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    var w = wall.clientWidth, h = wall.clientHeight;
+    var cols = Math.max(1, Math.floor(w / (21 * rem)));
+    var rows = Math.max(1, Math.floor(h / (15 * rem)));
+    var n = cols * rows;
+    if (n === slots.length && wall.childElementCount === n) return;
+    wall.style.gridTemplateColumns = "repeat(" + cols + ",minmax(0,1fr))";
+    wall.style.gridTemplateRows = "repeat(" + rows + ",minmax(0,1fr))";
+    wall.replaceChildren(); slots = []; shown = [];
+    for (var i = 0; i < n; i++){ var s = document.createElement("div"); s.className = "slot"; wall.appendChild(s); slots.push(s); shown.push(null); }
+    fillAll();
+  }
+  function takeNext(){
+    var n = order.length; if (!n) return null;
+    for (var k = 0; k < n; k++){
+      var id = order[ptr % n]; ptr++;
+      if (shown.indexOf(id) < 0 && !holding.has(id)) return id;
+    }
+    return null;
+  }
+  function place(i, id, animate){
+    var c = cards.get(id); if (!c || !slots[i]) return;
+    var slot = slots[i], old = slot.firstElementChild, node = build(c);
+    shown[i] = id;
+    if (animate && old) {
+      old.classList.add("out");
+      setTimeout(function(){ if (shown[i] === id) { slot.replaceChildren(node); requestAnimationFrame(function(){ node.classList.add("in"); }); } }, 450);
+    } else { slot.replaceChildren(node); requestAnimationFrame(function(){ node.classList.add("in"); }); }
+  }
+  function fillAll(){
+    for (var i = 0; i < slots.length; i++) if (shown[i] == null) { var id = takeNext(); if (id) place(i, id, false); }
+  }
+  function rotate(){
+    if (!slots.length || cards.size <= slots.length) return;
+    var i = (rr++) % slots.length, id = takeNext();
+    if (id) place(i, id, true);
+  }
+
+  /* ---------- إبراز البطاقة الجديدة ---------- */
+  function pushSpot(id){ holding.add(id); spotQ.push(id); runSpot(); }
+  function runSpot(){
+    if (spotBusy) return;
+    var id = spotQ.shift(); if (!id) return;
+    var c = cards.get(id);
+    if (!c) { holding.delete(id); return runSpot(); }
+    spotBusy = true;
+    spot.replaceChildren(build(c));
+    spot.firstElementChild.classList.add("in");
+    spot.classList.add("on"); updateEmpty();
+    setTimeout(function(){
+      spot.classList.remove("on");
+      setTimeout(function(){
+        holding.delete(id);
+        if (cards.has(id) && shown.indexOf(id) < 0 && slots.length) {
+          var i = shown.indexOf(null); if (i < 0) i = (rr++) % slots.length;
+          place(i, id, true);
+        }
+        spotBusy = false; runSpot();
+      }, 600);
+    }, SPOT);
+  }
+
+  /* ---------- إضافة وحذف ---------- */
+  function updateCount(){ $("#count").textContent = cards.size.toLocaleString("ar-SA"); }
+  function updateEmpty(){ $("#empty").classList.toggle("on", cards.size === 0 && !spotBusy); }
+  function addCard(c, isNew){
+    if (cards.has(c.id)) return;
+    cards.set(c.id, c);
+    if (isNew) order.unshift(c.id); else order.push(c.id);
+    updateCount(); updateEmpty();
+    if (isNew && ready) pushSpot(c.id); else if (slots.length) fillAll();
+  }
+  function removeCard(id){
+    if (!cards.has(id)) return;
+    cards.delete(id); order = order.filter(function(x){ return x !== id; });
+    holding.delete(id); spotQ = spotQ.filter(function(x){ return x !== id; });
+    var i = shown.indexOf(id);
+    if (i >= 0) { shown[i] = null; var nx = takeNext(); if (nx) place(i, nx, true); else slots[i].replaceChildren(); }
+    updateCount(); updateEmpty();
+  }
+
+  /* ---------- الاتصال بـ Supabase ---------- */
+  function setStatus(ok){
+    $("#dot").classList.toggle("bad", !ok);
+    $("#stat").textContent = ok ? "متصل" : "الاتصال متقطع، جارٍ إعادة المحاولة";
+  }
+  async function sync(){
+    try {
+      var r = await sb.from("messages").select("id,name,feeling,phrase,photo_path,created_at")
+                      .eq("approved", true).order("created_at", { ascending: false }).limit(500);
+      if (r.error) throw r.error;
+      setStatus(true);
+      var data = r.data || [], ids = new Set(data.map(function(d){ return d.id; }));
+      Array.from(cards.keys()).forEach(function(id){ if (!ids.has(id)) removeCard(id); });
+      var fresh = data.filter(function(d){ return !cards.has(d.id); });
+      if (!ready) { fresh.forEach(function(d){ addCard(d, false); }); ready = true; fillAll(); }
+      else fresh.reverse().forEach(function(d){ addCard(d, true); });
+    } catch(e){ console.error(e); setStatus(false); }
+  }
+  function subscribe(){
+    sb.channel("wall")
+      .on("postgres_changes", { event: "*", schema: "public", table: "messages" }, function(p){
+        if (p.eventType === "DELETE") { removeCard(p.old.id); return; }
+        var n = p.new;
+        if (n && n.approved) addCard(n, true); else if (n) removeCard(n.id);
+      })
+      .subscribe(function(s){ if (s === "SUBSCRIBED") setStatus(true); else if (s === "CHANNEL_ERROR" || s === "TIMED_OUT") setStatus(false); });
+  }
+
+  /* ---------- وضع العرض التجريبي ---------- */
+  function avatar(h1, h2){
+    var svg = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='hsl("+h1+",45%,38%)'/><stop offset='1' stop-color='hsl("+h2+",55%,55%)'/></linearGradient></defs><rect width='100' height='100' fill='url(#g)'/><circle cx='50' cy='40' r='17' fill='rgba(255,255,255,.88)'/><path d='M14 100c4-26 20-36 36-36s32 10 36 36z' fill='rgba(255,255,255,.88)'/></svg>";
+    return "data:image/svg+xml," + encodeURIComponent(svg);
+  }
+  var DEMO = [
+    ["سارة","pride","وطنٌ نفتخر به ونعمل من أجله كل يوم.",avatar(150,190)],
+    ["عبدالله","love","كل عام والوطن بخير وأهله بخير."],
+    ["نورة","belonging","أنتمي إلى أرض علّمتني أن الطموح لا سقف له.",avatar(30,60)],
+    ["فهد","joy","فرحتنا باليوم الوطني تجمعنا كل عام."],
+    ["ريم","hope","أتمنى أن أرد لوطني بعض ما أعطاني، بعلمي وعملي."],
+    ["محمد","gratitude","أشكر الله على نعمة الأمن والوطن الذي يحتضننا."],
+    ["لمى","pride","ست وتسعون سنة من البناء، ونحن اليوم جزء من الحكاية.",avatar(200,240)],
+    ["سلطان","belonging","في كل ركن من هذا الوطن قصة تستحق أن تُروى."],
+    ["هدى","love","حبك يا وطني يكبر معي كل يوم."],
+    ["تركي","hope","نبني اليوم لنترك لأبنائنا وطنًا أجمل.",avatar(340,20)],
+    ["جود","joy","الأخضر يزيّن كل شيء اليوم، والقلب أخضر معه."],
+    ["ماجد","gratitude","شكرًا لكل من سهر ليبقى هذا الوطن آمنًا."],
+    ["أريج","pride","أفتخر أني أدرس وأعمل وأحلم في بلد يفتح الأبواب."],
+    ["خالد","hope","غدنا أجمل بسواعد شبابه وعزيمتهم."]
+  ];
+  function demoCard(i){ var d = DEMO[i]; return { id:"demo"+i, name:d[0], feeling:d[1], phrase:d[2], photo_url:d[3]||"" }; }
+  function startDemo(){
+    for (var i = 0; i < 11; i++) addCard(demoCard(i), false);
+    ready = true; fillAll();
+    var next = 11;
+    setInterval(function(){ if (next < DEMO.length) addCard(demoCard(next++), true); }, 15000);
+  }
+
+  /* ---------- التشغيل ---------- */
+  var rt; window.addEventListener("resize", function(){ clearTimeout(rt); rt = setTimeout(layout, 200); });
+  layout(); updateEmpty();
+  setInterval(rotate, ROTATE);
+
+  if (demo) startDemo();
+  else { sync(); subscribe(); setInterval(sync, 15000); }
+
+  /* ---------- ملء الشاشة ومنع إطفاء الشاشة ---------- */
+  var mvT; document.addEventListener("mousemove", function(){ document.body.classList.add("mv"); clearTimeout(mvT); mvT = setTimeout(function(){ document.body.classList.remove("mv"); }, 3000); });
+  function toggleFS(){ if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
+  $("#fs").addEventListener("click", toggleFS);
+  document.addEventListener("keydown", function(e){ if (e.key === "f" || e.key === "F") toggleFS(); });
+  async function keepAwake(){ try { if (navigator.wakeLock) await navigator.wakeLock.request("screen"); } catch(_){} }
+  keepAwake(); document.addEventListener("visibilitychange", function(){ if (!document.hidden) keepAwake(); });
+})();
+</script>
+</body>
+</html>
